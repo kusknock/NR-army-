@@ -77,6 +77,8 @@
             this.txbWave = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.picSourceImage = new System.Windows.Forms.PictureBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.picGenHolo = new System.Windows.Forms.PictureBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -88,8 +90,6 @@
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tabVideo = new System.Windows.Forms.TabPage();
             this.picVideo = new System.Windows.Forms.PictureBox();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.picSourceImage = new System.Windows.Forms.PictureBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.panel4 = new System.Windows.Forms.Panel();
             this.picScale = new System.Windows.Forms.PictureBox();
@@ -107,6 +107,8 @@
             this.groupParamHolo.SuspendLayout();
             this.panel2.SuspendLayout();
             this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picSourceImage)).BeginInit();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picGenHolo)).BeginInit();
             this.tabPage3.SuspendLayout();
@@ -121,8 +123,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.tabVideo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picVideo)).BeginInit();
-            this.tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picSourceImage)).BeginInit();
             this.tabPage4.SuspendLayout();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picScale)).BeginInit();
@@ -609,6 +609,28 @@
             this.tabControl1.TabIndex = 9;
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.picSourceImage);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(674, 594);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Исходное";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // picSourceImage
+            // 
+            this.picSourceImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.picSourceImage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.picSourceImage.Location = new System.Drawing.Point(3, 3);
+            this.picSourceImage.Name = "picSourceImage";
+            this.picSourceImage.Size = new System.Drawing.Size(668, 588);
+            this.picSourceImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picSourceImage.TabIndex = 0;
+            this.picSourceImage.TabStop = false;
+            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.picGenHolo);
@@ -747,28 +769,6 @@
             this.picVideo.TabIndex = 0;
             this.picVideo.TabStop = false;
             // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.picSourceImage);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(674, 594);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Исходное";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // picSourceImage
-            // 
-            this.picSourceImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picSourceImage.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.picSourceImage.Location = new System.Drawing.Point(3, 3);
-            this.picSourceImage.Name = "picSourceImage";
-            this.picSourceImage.Size = new System.Drawing.Size(668, 588);
-            this.picSourceImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picSourceImage.TabIndex = 0;
-            this.picSourceImage.TabStop = false;
-            // 
             // tabPage4
             // 
             this.tabPage4.Controls.Add(this.panel4);
@@ -860,6 +860,8 @@
             this.groupParamHolo.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picSourceImage)).EndInit();
             this.tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picGenHolo)).EndInit();
             this.tabPage3.ResumeLayout(false);
@@ -874,8 +876,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.tabVideo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picVideo)).EndInit();
-            this.tabPage1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picSourceImage)).EndInit();
             this.tabPage4.ResumeLayout(false);
             this.panel4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picScale)).EndInit();

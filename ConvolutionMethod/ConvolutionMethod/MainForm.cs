@@ -231,9 +231,9 @@ namespace ConvolutionMethod
 
         bool selection = false; // режим выделения области 
 
-        int dCircle = 100;
+        int dCircle = 100, dScale = 100;
 
-        NumericUpDown scrollDCirle;
+        NumericUpDown scrollDCirle, scrollScale;
 
         SelectionRectangle sr = new SelectionRectangle();
 
@@ -335,7 +335,7 @@ namespace ConvolutionMethod
 
             trackBar1.Enabled = false;
 
-            picGenHolo.Image = picReconHolo.Image = picAnalyze.Image = null;
+            picGenHolo.Image = picReconHolo.Image = picAnalyze.Image = picScale.Image = picScale2.Image = null;
 
             EnabledControls(true);
         }
@@ -484,7 +484,7 @@ namespace ConvolutionMethod
         {
             OpenFileDialog ofd = new OpenFileDialog()
             {
-                Filter = "Image|*.*|BMP File| *.bmp|JPEG File|*.jpg| GIF File|*.gif",
+                Filter = "BMP File| *.bmp|JPEG File|*.jpg| GIF File|*.gif",
             };
 
             if (ofd.ShowDialog() != DialogResult.OK)
@@ -562,10 +562,103 @@ namespace ConvolutionMethod
             //TODO: CloseThread();
         }
 
+        #region Scale
+
         private void picScale_MouseClick(object sender, MouseEventArgs e)
         {
+            if (picScale.Image == null)
+                return;
+
+            bool click = false;
+
+            picScale.MouseDown += (s, ev) =>
+            {
+                click = true;
+            };
+
+            picScale.MouseUp += (s, ev) =>
+            {
+                click = false;
+            };
+
+            picScale.MouseMove += (s, ev) =>
+            {
+                if (click) DrawSquareScale(ev.Location, BoundVisibleImage(picScale));
+            };
+
+            ScrollScale(e.Location);
+
+            DrawSquareScale(e.Location, BoundVisibleImage(picScale));
 
         }
+
+        private void DrawSquareScale(Point location, Rectangle visibleScaleImageRectangle)
+        {
+            string nameOfSmallerProp = picScale.Width <= picScale.Height ? "Width" : "Height";
+
+            double componentSize = GetPropertiesValue<int>(picScale, nameOfSmallerProp, null) - 3;
+
+            double imageSize = GetPropertiesValue<int>(picScale.Image, nameOfSmallerProp, null);
+
+            double coefficientScaleImage = imageSize / componentSize;
+
+            dScale = (int)((int)scrollScale.Value / coefficientScaleImage);
+
+            Rectangle visibleBoundForScale = new Rectangle(
+                new Point(visibleScaleImageRectangle.Location.X + (dScale / 2), visibleScaleImageRectangle.Location.Y + (dScale / 2)),
+                new Size(visibleScaleImageRectangle.Size.Width - dScale, visibleScaleImageRectangle.Size.Height - dScale));
+
+            sr.StartPoint = new Point(location.X - (dScale / 2), location.Y - (dScale / 2));
+
+            if (!visibleBoundForScale.Contains(location))
+            {
+                int x = location.X < visibleBoundForScale.Left ? visibleBoundForScale.Left :
+                    location.X > visibleBoundForScale.Right ? visibleBoundForScale.Right : location.X;
+
+                int y = location.Y < visibleBoundForScale.Top ? visibleBoundForScale.Top :
+                    location.Y > visibleBoundForScale.Bottom ? visibleBoundForScale.Bottom : location.Y;
+
+                sr.StartPoint = new Point(x - (dScale / 2), y - (dScale / 2));
+            }
+
+            sr.CurrentPoint = new Point(sr.StartPoint.X + dScale, sr.StartPoint.Y + dScale);
+
+            picScale.Refresh();
+
+            using (var g = picScale.CreateGraphics())
+                g.DrawRectangle(Pens.Red, sr.CurrentRect);
+
+            var area = GetImageFromSelection(picScale, BoundVisibleImage(picScale));
+
+            picScale2.Image = ((Bitmap)picScale.Image).Clone(area, ((Bitmap)picScale.Image).PixelFormat);
+        }
+
+        private void ScrollScale(Point location)
+        {
+            scrollScale = new NumericUpDown()
+            {
+                Minimum = 5,
+                Maximum = picScale.Image.Width,
+                Value = scrollScale != null ? scrollScale.Value : 100,
+                Location = location,
+                Increment = 5,
+            };
+
+            Controls.Add(scrollScale);
+
+            scrollScale.Focus();
+
+            scrollScale.ValueChanged += (send, ev) =>
+            {
+                picScale.Refresh();
+
+                scrollScale.Focus();
+
+                DrawSquareScale(scrollScale.Location, BoundVisibleImage(picScale));
+            };
+        }
+
+        #endregion
 
         #region Video
 
@@ -656,7 +749,7 @@ namespace ConvolutionMethod
         {
             picAnalyze.Refresh();
 
-            var area = GetSelectionFromArea(zonesAnalyze[listZones.SelectedIndex]);
+            var area = GetSelectionFromArea(zonesAnalyze[listZones.SelectedIndex], picAnalyze);
 
             using (var g = picAnalyze.CreateGraphics())
                 g.DrawRectangle(Pens.Red, area);
@@ -798,7 +891,7 @@ namespace ConvolutionMethod
             return boundVisibleImage;
         }
 
-        private Rectangle GetImageFromSelection(PictureBox picHologram)
+        private Rectangle GetImageFromSelection(PictureBox picHologram, Rectangle visibleImageRectangle)
         {
             Point coefficientOfSubstract = (visibleImageRectangle.Width + 3) == picHologram.Width ?
                 new Point(0, ((picHologram.Height - 3) - visibleImageRectangle.Height) / 2) :
@@ -816,13 +909,13 @@ namespace ConvolutionMethod
             return new Rectangle(scalePoint, scaleSize);
         }
 
-        private Rectangle GetSelectionFromArea(Rectangle area)
+        private Rectangle GetSelectionFromArea(Rectangle area, PictureBox picHologram)
         {
-            string nameOfSmallerProp = picAnalyze.Width <= picAnalyze.Height ? "Width" : "Height";
+            string nameOfSmallerProp = picHologram.Width <= picHologram.Height ? "Width" : "Height";
 
-            int componentSize = GetPropertiesValue<int>(picAnalyze, nameOfSmallerProp, null) - 3;
+            double componentSize = GetPropertiesValue<int>(picHologram, nameOfSmallerProp, null) - 3;
 
-            double imageSize = GetPropertiesValue<int>(picAnalyze.Image, nameOfSmallerProp, null);
+            double imageSize = GetPropertiesValue<int>(picHologram.Image, nameOfSmallerProp, null);
 
             double coefficientScaleImage = imageSize / componentSize;
 
@@ -830,13 +923,13 @@ namespace ConvolutionMethod
 
             Dictionary<string, double> visibleSize = new Dictionary<string, double>();
 
-            visibleSize.Add("Width", coefficientScaleComponent * picAnalyze.Image.Width);
+            visibleSize.Add("Width", coefficientScaleComponent * picHologram.Image.Width);
 
-            visibleSize.Add("Height", coefficientScaleComponent * picAnalyze.Image.Height);
+            visibleSize.Add("Height", coefficientScaleComponent * picHologram.Image.Height);
 
-            int startPointY = nameOfSmallerProp == "Height" ? 0 : ((GetPropertiesValue<int>(picAnalyze, "Height", null) - 3) - (int)visibleSize["Height"]) / 2;
+            int startPointY = nameOfSmallerProp == "Height" ? 0 : ((GetPropertiesValue<int>(picHologram, "Height", null) - 3) - (int)visibleSize["Height"]) / 2;
 
-            int startPointX = nameOfSmallerProp == "Width" ? 0 : ((GetPropertiesValue<int>(picAnalyze, "Width", null) - 3) - (int)visibleSize["Width"]) / 2;
+            int startPointX = nameOfSmallerProp == "Width" ? 0 : ((GetPropertiesValue<int>(picHologram, "Width", null) - 3) - (int)visibleSize["Width"]) / 2;
 
             Point startPoint = new Point(startPointX, startPointY);
 
@@ -846,9 +939,9 @@ namespace ConvolutionMethod
 
             ///-----------------------
 
-            Point coefficientOfSubstract = (boundVisibleImage.Width + 3) == picAnalyze.Width ?
-                new Point(0, ((picAnalyze.Height - 3) - boundVisibleImage.Height) / 2) :
-                new Point(((picAnalyze.Width - 3) - boundVisibleImage.Width) / 2, 0);
+            Point coefficientOfSubstract = (boundVisibleImage.Width + 3) == picHologram.Width ?
+                new Point(0, ((picHologram.Height - 3) - boundVisibleImage.Height) / 2) :
+                new Point(((picHologram.Width - 3) - boundVisibleImage.Width) / 2, 0);
 
             Point scalePoint = new Point((int)(area.X / coefficientScaleImage + coefficientOfSubstract.X),
                 (int)(area.Y / coefficientScaleImage + coefficientOfSubstract.Y));
@@ -867,7 +960,7 @@ namespace ConvolutionMethod
 
             picReconHolo.Refresh();
 
-            var area = GetImageFromSelection(picReconHolo);
+            var area = GetImageFromSelection(picReconHolo, visibleImageRectangle);
 
             zonesAnalyze.Add(area);
 
