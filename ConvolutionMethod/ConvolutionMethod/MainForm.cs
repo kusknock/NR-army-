@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Numerics;
-using System.Reflection;
 using System.Threading;
 using System.Windows.Forms.DataVisualization.Charting;
 using Accord.Video.DirectShow;
@@ -24,7 +19,7 @@ namespace ConvolutionMethod
         /// TODO: перенести BoundVisibleImage в эту структуру
         /// </summary>
 
-        struct SelectionRectangle
+        class SelectionRectangle
         {
             Point startPoint;
 
@@ -235,7 +230,11 @@ namespace ConvolutionMethod
 
         NumericUpDown scrollDCirle, scrollScale;
 
-        SelectionRectangle sr = new SelectionRectangle();
+        SelectionRectangle sr0 = new SelectionRectangle();
+
+        SelectionRectangle sr1 = new SelectionRectangle();
+
+        SelectionRectangle sr2 = new SelectionRectangle();
 
         Rectangle visibleImageRectangle = new Rectangle();
 
@@ -283,10 +282,13 @@ namespace ConvolutionMethod
             float.TryParse(txbSizeStep.Text.Replace('.', ','), out sizeStep);
             steps = (int)numStep.Value;
 
-            videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
+            if (!InvokeRequired)
+            {
+                videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
 
-            foreach (FilterInfo fi in videoDevices)
-                cmbCam.Items.Add(fi.Name);
+                foreach (FilterInfo fi in videoDevices)
+                    cmbCam.Items.Add(fi.Name);
+            }
 
             cmbCam.SelectedIndex = 0;
 
@@ -419,11 +421,12 @@ namespace ConvolutionMethod
 
             //-----------------
             if (tabControl1.SelectedIndex == 2)
+            { 
                 toolStrip1.Enabled = true;
+                visibleImageRectangle = BoundVisibleImage(picReconHolo, sr0);
+            }
             else
-                toolStrip1.Enabled = false;
-
-            visibleImageRectangle = BoundVisibleImage(picReconHolo);
+                toolStrip1.Enabled = false; 
         }
 
         private void rbtnPhase_CheckedChanged(object sender, EventArgs e)
@@ -562,6 +565,77 @@ namespace ConvolutionMethod
             //TODO: CloseThread();
         }
 
+        #region Ruler
+
+        private void picScale2_MouseClick(object sender, MouseEventArgs e)
+        {
+            picScale2.MouseMove += (s, ev) =>
+            {
+                if(selection)
+                {
+                    picScale2.Refresh();
+
+                    sr2.CurrentPoint = ev.Location;
+
+                    using (var g = picScale2.CreateGraphics())
+                        g.DrawLine(Pens.Red, sr2.StartPoint, sr2.CurrentPoint);
+                }
+            };
+
+            if (sr2.StartPoint == Point.Empty)
+            {
+                sr2.StartPoint = e.Location;
+                selection = true;
+            }
+            else
+            {
+                sr2.StartPoint = Point.Empty;
+                selection = false;
+            }
+
+        }
+
+        private void DrawRuler(Point a, Point b, Rectangle visibleScaleImageRectangle)
+        {
+            //string nameOfSmallerProp = picScale.Width <= picScale.Height ? "Width" : "Height";
+
+            //double componentSize = GetPropertiesValue<int>(picScale, nameOfSmallerProp, null) - 3;
+
+            //double imageSize = GetPropertiesValue<int>(picScale.Image, nameOfSmallerProp, null);
+
+            //double coefficientScaleImage = imageSize / componentSize;
+
+            //Rectangle visibleBoundForScale = new Rectangle(
+            //    new Point(visibleScaleImageRectangle.Location.X, visibleScaleImageRectangle.Location.Y),
+            //    new Size(visibleScaleImageRectangle.Size.Width, visibleScaleImageRectangle.Size.Height));
+
+            //sr.StartPoint = new Point(a.X, a.Y);
+
+            //if (!visibleBoundForScale.Contains(a))
+            //{
+            //    int x = a.X < visibleBoundForScale.Left ? visibleBoundForScale.Left :
+            //        a.X > visibleBoundForScale.Right ? visibleBoundForScale.Right : a.X;
+
+            //    int y = a.Y < visibleBoundForScale.Top ? visibleBoundForScale.Top :
+            //        a.Y > visibleBoundForScale.Bottom ? visibleBoundForScale.Bottom : a.Y;
+
+            //    sr.StartPoint = new Point(x, y);
+            //}
+
+            //sr.CurrentPoint = new Point(sr.StartPoint.X, sr.StartPoint.Y);
+
+            //picScale.Refresh();
+
+            //using (var g = picScale.CreateGraphics())
+            //    g.DrawRectangle(Pens.Red, sr.CurrentRect);
+
+            //var area = GetImageFromSelection(picScale, BoundVisibleImage(picScale), sr2);
+
+            //picScale2.Image = ((Bitmap)picScale.Image).Clone(area, ((Bitmap)picScale.Image).PixelFormat);
+        }
+
+        #endregion
+
         #region Scale
 
         private void picScale_MouseClick(object sender, MouseEventArgs e)
@@ -583,12 +657,12 @@ namespace ConvolutionMethod
 
             picScale.MouseMove += (s, ev) =>
             {
-                if (click) DrawSquareScale(ev.Location, BoundVisibleImage(picScale));
+                if (click) DrawSquareScale(ev.Location, BoundVisibleImage(picScale, sr1));
             };
 
             ScrollScale(e.Location);
 
-            DrawSquareScale(e.Location, BoundVisibleImage(picScale));
+            DrawSquareScale(e.Location, BoundVisibleImage(picScale, sr1));
 
         }
 
@@ -608,7 +682,7 @@ namespace ConvolutionMethod
                 new Point(visibleScaleImageRectangle.Location.X + (dScale / 2), visibleScaleImageRectangle.Location.Y + (dScale / 2)),
                 new Size(visibleScaleImageRectangle.Size.Width - dScale, visibleScaleImageRectangle.Size.Height - dScale));
 
-            sr.StartPoint = new Point(location.X - (dScale / 2), location.Y - (dScale / 2));
+            sr1.StartPoint = new Point(location.X - (dScale / 2), location.Y - (dScale / 2));
 
             if (!visibleBoundForScale.Contains(location))
             {
@@ -618,17 +692,17 @@ namespace ConvolutionMethod
                 int y = location.Y < visibleBoundForScale.Top ? visibleBoundForScale.Top :
                     location.Y > visibleBoundForScale.Bottom ? visibleBoundForScale.Bottom : location.Y;
 
-                sr.StartPoint = new Point(x - (dScale / 2), y - (dScale / 2));
+                sr1.StartPoint = new Point(x - (dScale / 2), y - (dScale / 2));
             }
 
-            sr.CurrentPoint = new Point(sr.StartPoint.X + dScale, sr.StartPoint.Y + dScale);
+            sr1.CurrentPoint = new Point(sr1.StartPoint.X + dScale, sr1.StartPoint.Y + dScale);
 
             picScale.Refresh();
 
             using (var g = picScale.CreateGraphics())
-                g.DrawRectangle(Pens.Red, sr.CurrentRect);
+                g.DrawRectangle(Pens.Red, sr1.CurrentRect);
 
-            var area = GetImageFromSelection(picScale, BoundVisibleImage(picScale));
+            var area = GetImageFromSelection(picScale, BoundVisibleImage(picScale, sr1), sr1);
 
             picScale2.Image = ((Bitmap)picScale.Image).Clone(area, ((Bitmap)picScale.Image).PixelFormat);
         }
@@ -650,11 +724,9 @@ namespace ConvolutionMethod
 
             scrollScale.ValueChanged += (send, ev) =>
             {
-                picScale.Refresh();
-
                 scrollScale.Focus();
 
-                DrawSquareScale(scrollScale.Location, BoundVisibleImage(picScale));
+                DrawSquareScale(scrollScale.Location, BoundVisibleImage(picScale, sr1));
             };
         }
 
@@ -860,7 +932,7 @@ namespace ConvolutionMethod
 
         #region Get Selection
 
-        private Rectangle BoundVisibleImage(PictureBox picHologram)
+        private Rectangle BoundVisibleImage(PictureBox picHologram, SelectionRectangle sr)
         {
             string nameOfSmallerProp = picHologram.Width <= picHologram.Height ? "Width" : "Height";
 
@@ -891,7 +963,7 @@ namespace ConvolutionMethod
             return boundVisibleImage;
         }
 
-        private Rectangle GetImageFromSelection(PictureBox picHologram, Rectangle visibleImageRectangle)
+        private Rectangle GetImageFromSelection(PictureBox picHologram, Rectangle visibleImageRectangle, SelectionRectangle sr)
         {
             Point coefficientOfSubstract = (visibleImageRectangle.Width + 3) == picHologram.Width ?
                 new Point(0, ((picHologram.Height - 3) - visibleImageRectangle.Height) / 2) :
@@ -954,13 +1026,13 @@ namespace ConvolutionMethod
 
         private void WriteRecordZone()
         {
-            sr.StartPoint = Point.Empty;
+            sr0.StartPoint = Point.Empty;
 
-            sr.CurrentPoint = Point.Empty;
+            sr0.CurrentPoint = Point.Empty;
 
             picReconHolo.Refresh();
 
-            var area = GetImageFromSelection(picReconHolo, visibleImageRectangle);
+            var area = GetImageFromSelection(picReconHolo, visibleImageRectangle, sr0);
 
             zonesAnalyze.Add(area);
 
@@ -971,13 +1043,13 @@ namespace ConvolutionMethod
 
         private void DrawEllipseSelection(Point location)
         {
-            dCircle = (int)((int)scrollDCirle.Value/sr.CoefficientScaleImage);
+            dCircle = (int)((int)scrollDCirle.Value/sr0.CoefficientScaleImage);
 
             Rectangle visibleBoundForCircleSelection = new Rectangle(
                 new Point(visibleImageRectangle.Location.X + (dCircle / 2), visibleImageRectangle.Location.Y + (dCircle / 2)),
                 new Size(visibleImageRectangle.Size.Width - dCircle, visibleImageRectangle.Size.Height - dCircle));
 
-            sr.StartPoint = new Point(location.X - (dCircle / 2), location.Y - (dCircle / 2));
+            sr0.StartPoint = new Point(location.X - (dCircle / 2), location.Y - (dCircle / 2));
 
             if (!visibleBoundForCircleSelection.Contains(location))
             {
@@ -987,16 +1059,16 @@ namespace ConvolutionMethod
                 int y = location.Y < visibleBoundForCircleSelection.Top ? visibleBoundForCircleSelection.Top :
                     location.Y > visibleBoundForCircleSelection.Bottom ? visibleBoundForCircleSelection.Bottom : location.Y;
 
-                sr.StartPoint = new Point(x - (dCircle / 2), y - (dCircle / 2));
+                sr0.StartPoint = new Point(x - (dCircle / 2), y - (dCircle / 2));
             }
 
-            sr.CurrentPoint = new Point(sr.StartPoint.X + dCircle, sr.StartPoint.Y + dCircle);
+            sr0.CurrentPoint = new Point(sr0.StartPoint.X + dCircle, sr0.StartPoint.Y + dCircle);
 
             using (var g = picReconHolo.CreateGraphics())
             {
-                g.DrawEllipse(Pens.Red, sr.CurrentRect);
+                g.DrawEllipse(Pens.Red, sr0.CurrentRect);
                 g.DrawString(scrollDCirle.Value.ToString(), new Font("Calibri", 10f),
-                    Brushes.Red, new Point(sr.StartPoint.X - 5, sr.StartPoint.Y - 5));
+                    Brushes.Red, new Point(sr0.StartPoint.X - 5, sr0.StartPoint.Y - 5));
             }
         }
 
@@ -1028,13 +1100,13 @@ namespace ConvolutionMethod
                 if (e.Button != MouseButtons.Left)
                     return;
 
-                if (!sr.CurrentRect.IsEmpty)
-                    sr.CurrentRect = Rectangle.Empty;
+                if (!sr0.CurrentRect.IsEmpty)
+                    sr0.CurrentRect = Rectangle.Empty;
 
                 if (picReconHolo.Image == null || !visibleImageRectangle.Contains(e.Location))
                     return;
 
-                sr.StartPoint = e.Location;
+                sr0.StartPoint = e.Location;
 
                 selection = true;
             }
@@ -1049,12 +1121,12 @@ namespace ConvolutionMethod
 
             if (btnSelection.Checked)
             {
-                if (sr.StartPoint.IsEmpty)
+                if (sr0.StartPoint.IsEmpty)
                     return;
 
-                sr.CurrentPoint = e.Location;
+                sr0.CurrentPoint = e.Location;
 
-                if (!visibleImageRectangle.Contains(sr.CurrentPoint))
+                if (!visibleImageRectangle.Contains(sr0.CurrentPoint))
                 {
                     int x = e.X < visibleImageRectangle.Left ? visibleImageRectangle.Left :
                         e.X > visibleImageRectangle.Right ? visibleImageRectangle.Right : e.X;
@@ -1062,12 +1134,12 @@ namespace ConvolutionMethod
                     int y = e.Y < visibleImageRectangle.Top ? visibleImageRectangle.Top :
                         e.Y > visibleImageRectangle.Bottom ? visibleImageRectangle.Bottom : e.Y;
 
-                    sr.CurrentPoint = new Point(x, y);
+                    sr0.CurrentPoint = new Point(x, y);
                 }
 
                 if (selection)
                     using (var g = picReconHolo.CreateGraphics())
-                        g.DrawRectangle(Pens.Red, sr.CurrentRect);
+                        g.DrawRectangle(Pens.Red, sr0.CurrentRect);
             }
 
             if (btnCircle.Checked)
@@ -1082,7 +1154,7 @@ namespace ConvolutionMethod
 
         private void picReconHolo_MouseUp(object sender, MouseEventArgs e)
         {
-            if (sr.CurrentRect.IsEmpty || sr.StartPoint.IsEmpty
+            if (sr0.CurrentRect.IsEmpty || sr0.StartPoint.IsEmpty
                 || e.Button != MouseButtons.Left || !btnSelection.Checked)
                 return;
 
@@ -1121,7 +1193,7 @@ namespace ConvolutionMethod
             if (picReconHolo.Image == null)
                 return;
 
-            visibleImageRectangle = BoundVisibleImage(picReconHolo);
+            visibleImageRectangle = BoundVisibleImage(picReconHolo, sr0);
         }
 
         private void MainForm_ResizeEnd(object sender, EventArgs e)
@@ -1129,17 +1201,17 @@ namespace ConvolutionMethod
             if (picReconHolo.Image == null)
                 return;
 
-            visibleImageRectangle = BoundVisibleImage(picReconHolo);
+            visibleImageRectangle = BoundVisibleImage(picReconHolo, sr0);
         }
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Shift) sr.SquareSelection = true;
+            if (e.Shift) sr0.SquareSelection = true;
         }
 
         private void MainForm_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Shift) sr.SquareSelection = false;
+            if (e.Shift) sr0.SquareSelection = false;
         }
 
         #endregion
@@ -1528,7 +1600,7 @@ namespace ConvolutionMethod
 
             picScale.Image = new Bitmap(picReconHolo.Image);
 
-            visibleImageRectangle = BoundVisibleImage(picReconHolo);
+            visibleImageRectangle = BoundVisibleImage(picReconHolo, sr0);
         }
 
         private void ReconstructionDynamicDistance()
@@ -1587,7 +1659,7 @@ namespace ConvolutionMethod
 
             picScale.Image = new Bitmap(picReconHolo.Image);
 
-            visibleImageRectangle = BoundVisibleImage(picReconHolo);
+            visibleImageRectangle = BoundVisibleImage(picReconHolo, sr0);
 
             //toolStripProgressBar1.Value = 100; // прогресс бар
             SetValueControlInOtherThread(toolStripProgressBar1, "Value", 100);

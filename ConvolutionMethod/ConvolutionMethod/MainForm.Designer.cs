@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.btnFile = new System.Windows.Forms.ToolStripMenuItem();
             this.btnOpen = new System.Windows.Forms.ToolStripMenuItem();
@@ -88,13 +88,13 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.picAnalyze = new System.Windows.Forms.PictureBox();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.tabVideo = new System.Windows.Forms.TabPage();
-            this.picVideo = new System.Windows.Forms.PictureBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.panel4 = new System.Windows.Forms.Panel();
             this.picScale = new System.Windows.Forms.PictureBox();
             this.panel3 = new System.Windows.Forms.Panel();
             this.picScale2 = new System.Windows.Forms.PictureBox();
+            this.tabVideo = new System.Windows.Forms.TabPage();
+            this.picVideo = new System.Windows.Forms.PictureBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -121,13 +121,13 @@
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picAnalyze)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
-            this.tabVideo.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picVideo)).BeginInit();
             this.tabPage4.SuspendLayout();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picScale)).BeginInit();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picScale2)).BeginInit();
+            this.tabVideo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picVideo)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -599,8 +599,8 @@
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabZones);
-            this.tabControl1.Controls.Add(this.tabVideo);
             this.tabControl1.Controls.Add(this.tabPage4);
+            this.tabControl1.Controls.Add(this.tabVideo);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -737,37 +737,16 @@
             // 
             this.chart1.BackColor = System.Drawing.SystemColors.Control;
             this.chart1.BorderlineColor = System.Drawing.Color.Black;
-            chartArea2.Name = "Area";
-            this.chart1.ChartAreas.Add(chartArea2);
+            chartArea1.Name = "Area";
+            this.chart1.ChartAreas.Add(chartArea1);
             this.chart1.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend2.Name = "Legend1";
-            this.chart1.Legends.Add(legend2);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(0, 0);
             this.chart1.Name = "chart1";
             this.chart1.Size = new System.Drawing.Size(662, 159);
             this.chart1.TabIndex = 18;
             this.chart1.Text = "chart1";
-            // 
-            // tabVideo
-            // 
-            this.tabVideo.Controls.Add(this.picVideo);
-            this.tabVideo.Location = new System.Drawing.Point(4, 22);
-            this.tabVideo.Name = "tabVideo";
-            this.tabVideo.Padding = new System.Windows.Forms.Padding(3);
-            this.tabVideo.Size = new System.Drawing.Size(674, 594);
-            this.tabVideo.TabIndex = 4;
-            this.tabVideo.Text = "Изображение с камеры";
-            this.tabVideo.UseVisualStyleBackColor = true;
-            // 
-            // picVideo
-            // 
-            this.picVideo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.picVideo.Location = new System.Drawing.Point(3, 3);
-            this.picVideo.Name = "picVideo";
-            this.picVideo.Size = new System.Drawing.Size(668, 588);
-            this.picVideo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picVideo.TabIndex = 0;
-            this.picVideo.TabStop = false;
             // 
             // tabPage4
             // 
@@ -821,6 +800,28 @@
             this.picScale2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picScale2.TabIndex = 1;
             this.picScale2.TabStop = false;
+            this.picScale2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picScale2_MouseClick);
+            // 
+            // tabVideo
+            // 
+            this.tabVideo.Controls.Add(this.picVideo);
+            this.tabVideo.Location = new System.Drawing.Point(4, 22);
+            this.tabVideo.Name = "tabVideo";
+            this.tabVideo.Padding = new System.Windows.Forms.Padding(3);
+            this.tabVideo.Size = new System.Drawing.Size(674, 594);
+            this.tabVideo.TabIndex = 4;
+            this.tabVideo.Text = "Изображение с камеры";
+            this.tabVideo.UseVisualStyleBackColor = true;
+            // 
+            // picVideo
+            // 
+            this.picVideo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.picVideo.Location = new System.Drawing.Point(3, 3);
+            this.picVideo.Name = "picVideo";
+            this.picVideo.Size = new System.Drawing.Size(668, 588);
+            this.picVideo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picVideo.TabIndex = 0;
+            this.picVideo.TabStop = false;
             // 
             // MainForm
             // 
@@ -874,13 +875,13 @@
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picAnalyze)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
-            this.tabVideo.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picVideo)).EndInit();
             this.tabPage4.ResumeLayout(false);
             this.panel4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picScale)).EndInit();
             this.panel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picScale2)).EndInit();
+            this.tabVideo.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picVideo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
