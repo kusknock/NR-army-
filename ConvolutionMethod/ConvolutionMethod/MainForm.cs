@@ -224,7 +224,7 @@ namespace ConvolutionMethod
 
         int widthImage, heightImage;
 
-        bool selection = false; // режим выделения области 
+        bool selection = false, rule = false; // режим выделения области 
 
         int dCircle = 100, dScale = 100;
 
@@ -569,69 +569,89 @@ namespace ConvolutionMethod
 
         private void picScale2_MouseClick(object sender, MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Right)
+            {
+                picScale2.Refresh();
+                rule = false;
+                return;
+            }
+
             picScale2.MouseMove += (s, ev) =>
             {
-                if(selection)
+                if (rule)
                 {
-                    picScale2.Refresh();
-
                     sr2.CurrentPoint = ev.Location;
 
-                    using (var g = picScale2.CreateGraphics())
-                        g.DrawLine(Pens.Red, sr2.StartPoint, sr2.CurrentPoint);
+                    DrawRuler(sr2.StartPoint, sr2.CurrentPoint, BoundVisibleImage(picScale2, sr2));
                 }
             };
 
             if (sr2.StartPoint == Point.Empty)
             {
                 sr2.StartPoint = e.Location;
-                selection = true;
+                rule = true;
             }
             else
             {
                 sr2.StartPoint = Point.Empty;
-                selection = false;
+                rule = false;
             }
-
         }
 
-        private void DrawRuler(Point a, Point b, Rectangle visibleScaleImageRectangle)
+        private void DrawRuler(Point a, Point b, Rectangle visibleImageRectangle)
         {
-            //string nameOfSmallerProp = picScale.Width <= picScale.Height ? "Width" : "Height";
+            Rectangle visibleBound = new Rectangle(
+                new Point(visibleImageRectangle.Location.X, visibleImageRectangle.Location.Y),
+                new Size(visibleImageRectangle.Size.Width, visibleImageRectangle.Size.Height));   
 
-            //double componentSize = GetPropertiesValue<int>(picScale, nameOfSmallerProp, null) - 3;
+            if (!visibleBound.Contains(a))
+                return;
 
-            //double imageSize = GetPropertiesValue<int>(picScale.Image, nameOfSmallerProp, null);
+            string nameOfSmallerProp = picScale2.Width <= picScale2.Height ? "Width" : "Height";
 
-            //double coefficientScaleImage = imageSize / componentSize;
+            double componentSize = GetPropertiesValue<int>(picScale2, nameOfSmallerProp, null) - 3;
 
-            //Rectangle visibleBoundForScale = new Rectangle(
-            //    new Point(visibleScaleImageRectangle.Location.X, visibleScaleImageRectangle.Location.Y),
-            //    new Size(visibleScaleImageRectangle.Size.Width, visibleScaleImageRectangle.Size.Height));
+            double imageSize = GetPropertiesValue<int>(picScale2.Image, nameOfSmallerProp, null);
 
-            //sr.StartPoint = new Point(a.X, a.Y);
+            double coefficientScaleImage = imageSize / componentSize;
 
-            //if (!visibleBoundForScale.Contains(a))
-            //{
-            //    int x = a.X < visibleBoundForScale.Left ? visibleBoundForScale.Left :
-            //        a.X > visibleBoundForScale.Right ? visibleBoundForScale.Right : a.X;
+            if (!visibleBound.Contains(b))
+            {
+                int x = b.X < visibleBound.Left ? visibleBound.Left :
+                    b.X > visibleBound.Right ? visibleBound.Right : b.X;
 
-            //    int y = a.Y < visibleBoundForScale.Top ? visibleBoundForScale.Top :
-            //        a.Y > visibleBoundForScale.Bottom ? visibleBoundForScale.Bottom : a.Y;
+                int y = b.Y < visibleBound.Top ? visibleBound.Top :
+                    b.Y > visibleBound.Bottom ? visibleBound.Bottom : b.Y;
 
-            //    sr.StartPoint = new Point(x, y);
-            //}
+                b = new Point(x, y);
+            }
 
-            //sr.CurrentPoint = new Point(sr.StartPoint.X, sr.StartPoint.Y);
+            picScale2.Refresh();
 
-            //picScale.Refresh();
+            Point coefficientOfSubstract = (visibleImageRectangle.Width + 3) == picScale2.Width ?
+                new Point(0, ((picScale2.Height - 3) - visibleImageRectangle.Height) / 2) :
+                new Point(((picScale2.Width - 3) - visibleImageRectangle.Width) / 2, 0);
 
-            //using (var g = picScale.CreateGraphics())
-            //    g.DrawRectangle(Pens.Red, sr.CurrentRect);
+            Point scalePointA = new Point((int)((a.X - coefficientOfSubstract.X) * coefficientScaleImage),
+                (int)((a.Y - coefficientOfSubstract.Y) * coefficientScaleImage));
 
-            //var area = GetImageFromSelection(picScale, BoundVisibleImage(picScale), sr2);
+            Point scalePointB = new Point((int)((b.X - coefficientOfSubstract.X) * coefficientScaleImage),
+                (int)((b.Y - coefficientOfSubstract.Y) * coefficientScaleImage));
 
-            //picScale2.Image = ((Bitmap)picScale.Image).Clone(area, ((Bitmap)picScale.Image).PixelFormat);
+            using (var g = picScale2.CreateGraphics())
+            {
+                double d1 = Math.Pow(Math.Abs(scalePointB.X - scalePointA.X), 2);
+                double d2 = Math.Pow(Math.Abs(scalePointB.Y - scalePointA.Y), 2);
+
+                double d = Math.Sqrt(d1 + d2);
+
+                g.DrawLine(Pens.Red, a, b);
+
+                g.DrawString($"({scalePointA.X}, {scalePointA.Y})", new Font("Calibri", 10f),
+                    Brushes.Red, new Point(a.X - 5, a.Y - 5));
+                g.DrawString($"({scalePointB.X}, {scalePointB.Y}), d = {d}", new Font("Calibri", 10f),
+                    Brushes.Red, new Point(b.X - 5, b.Y - 5));
+            }
         }
 
         #endregion
@@ -736,7 +756,7 @@ namespace ConvolutionMethod
 
         private void btnVideo_Click(object sender, EventArgs e)
         {
-            if (tabControl1.SelectedIndex != 4)
+            if (tabControl1.SelectedTab.Text != "Изображение с камеры")
                 return;
 
             if (startCam)
