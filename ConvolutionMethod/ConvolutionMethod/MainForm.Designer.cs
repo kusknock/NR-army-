@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
@@ -53,6 +54,7 @@
             this.listZones = new System.Windows.Forms.ListBox();
             this.btnReconHolo = new System.Windows.Forms.Button();
             this.groupParamProcess = new System.Windows.Forms.GroupBox();
+            this.btnSaveAllReconImages = new System.Windows.Forms.Button();
             this.lblCurrentDistance = new System.Windows.Forms.Label();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.numStep = new System.Windows.Forms.NumericUpDown();
@@ -95,6 +97,9 @@
             this.picScale2 = new System.Windows.Forms.PictureBox();
             this.tabVideo = new System.Windows.Forms.TabPage();
             this.picVideo = new System.Windows.Forms.PictureBox();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.копироватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnSaveAsBitmap = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -128,6 +133,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.picScale2)).BeginInit();
             this.tabVideo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picVideo)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -190,7 +196,7 @@
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
             this.toolStripProgressBar1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 647);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 701);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.statusStrip1.Size = new System.Drawing.Size(964, 22);
@@ -218,9 +224,9 @@
             this.panel1.Controls.Add(this.groupColor);
             this.panel1.Controls.Add(this.groupParamHolo);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel1.Location = new System.Drawing.Point(682, 27);
+            this.panel1.Location = new System.Drawing.Point(717, 27);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(282, 620);
+            this.panel1.Size = new System.Drawing.Size(247, 674);
             this.panel1.TabIndex = 11;
             // 
             // toolStrip1
@@ -234,7 +240,7 @@
             this.btnSelection});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(282, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(247, 25);
             this.toolStrip1.TabIndex = 13;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -273,11 +279,12 @@
             // 
             // groupZones
             // 
+            this.groupZones.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.groupZones.Controls.Add(this.cmbMeasure);
             this.groupZones.Controls.Add(this.btnCalcDifference);
             this.groupZones.Controls.Add(this.listZones);
             this.groupZones.Enabled = false;
-            this.groupZones.Location = new System.Drawing.Point(41, 413);
+            this.groupZones.Location = new System.Drawing.Point(23, 465);
             this.groupZones.Name = "groupZones";
             this.groupZones.Size = new System.Drawing.Size(196, 203);
             this.groupZones.TabIndex = 15;
@@ -320,10 +327,11 @@
             // 
             // btnReconHolo
             // 
+            this.btnReconHolo.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.btnReconHolo.Enabled = false;
-            this.btnReconHolo.Location = new System.Drawing.Point(143, 384);
+            this.btnReconHolo.Location = new System.Drawing.Point(125, 436);
             this.btnReconHolo.Name = "btnReconHolo";
-            this.btnReconHolo.Size = new System.Drawing.Size(96, 23);
+            this.btnReconHolo.Size = new System.Drawing.Size(94, 23);
             this.btnReconHolo.TabIndex = 14;
             this.btnReconHolo.Text = "Восстановить";
             this.btnReconHolo.UseVisualStyleBackColor = true;
@@ -331,6 +339,8 @@
             // 
             // groupParamProcess
             // 
+            this.groupParamProcess.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.groupParamProcess.Controls.Add(this.btnSaveAllReconImages);
             this.groupParamProcess.Controls.Add(this.lblCurrentDistance);
             this.groupParamProcess.Controls.Add(this.trackBar1);
             this.groupParamProcess.Controls.Add(this.numStep);
@@ -338,12 +348,24 @@
             this.groupParamProcess.Controls.Add(this.lblSizeStep);
             this.groupParamProcess.Controls.Add(this.txbSizeStep);
             this.groupParamProcess.Enabled = false;
-            this.groupParamProcess.Location = new System.Drawing.Point(41, 257);
+            this.groupParamProcess.Location = new System.Drawing.Point(23, 257);
             this.groupParamProcess.Name = "groupParamProcess";
-            this.groupParamProcess.Size = new System.Drawing.Size(196, 121);
+            this.groupParamProcess.Size = new System.Drawing.Size(196, 173);
             this.groupParamProcess.TabIndex = 11;
             this.groupParamProcess.TabStop = false;
             this.groupParamProcess.Text = "Параметры восстановления";
+            // 
+            // btnSaveAllReconImages
+            // 
+            this.btnSaveAllReconImages.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.btnSaveAllReconImages.Enabled = false;
+            this.btnSaveAllReconImages.Location = new System.Drawing.Point(6, 121);
+            this.btnSaveAllReconImages.Name = "btnSaveAllReconImages";
+            this.btnSaveAllReconImages.Size = new System.Drawing.Size(184, 46);
+            this.btnSaveAllReconImages.TabIndex = 17;
+            this.btnSaveAllReconImages.Text = "Сохранить серию восстановленных изображений";
+            this.btnSaveAllReconImages.UseVisualStyleBackColor = true;
+            this.btnSaveAllReconImages.Click += new System.EventHandler(this.btnSaveAllReconImages_Click);
             // 
             // lblCurrentDistance
             // 
@@ -410,8 +432,9 @@
             // 
             // btnGenHolo
             // 
+            this.btnGenHolo.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.btnGenHolo.Enabled = false;
-            this.btnGenHolo.Location = new System.Drawing.Point(41, 384);
+            this.btnGenHolo.Location = new System.Drawing.Point(23, 436);
             this.btnGenHolo.Name = "btnGenHolo";
             this.btnGenHolo.Size = new System.Drawing.Size(96, 23);
             this.btnGenHolo.TabIndex = 13;
@@ -421,6 +444,7 @@
             // 
             // groupColor
             // 
+            this.groupColor.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.groupColor.Controls.Add(this.rbtnPhase);
             this.groupColor.Controls.Add(this.rbtnAmp);
             this.groupColor.Controls.Add(this.lblChannel);
@@ -429,7 +453,7 @@
             this.groupColor.Controls.Add(this.lblSize);
             this.groupColor.Controls.Add(this.lblN);
             this.groupColor.Enabled = false;
-            this.groupColor.Location = new System.Drawing.Point(41, 28);
+            this.groupColor.Location = new System.Drawing.Point(23, 28);
             this.groupColor.Name = "groupColor";
             this.groupColor.Size = new System.Drawing.Size(196, 116);
             this.groupColor.TabIndex = 12;
@@ -516,6 +540,7 @@
             // 
             // groupParamHolo
             // 
+            this.groupParamHolo.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.groupParamHolo.Controls.Add(this.lblDist);
             this.groupParamHolo.Controls.Add(this.txbDist);
             this.groupParamHolo.Controls.Add(this.lblDx);
@@ -523,7 +548,7 @@
             this.groupParamHolo.Controls.Add(this.lblWave);
             this.groupParamHolo.Controls.Add(this.txbWave);
             this.groupParamHolo.Enabled = false;
-            this.groupParamHolo.Location = new System.Drawing.Point(41, 150);
+            this.groupParamHolo.Location = new System.Drawing.Point(23, 150);
             this.groupParamHolo.Name = "groupParamHolo";
             this.groupParamHolo.Size = new System.Drawing.Size(196, 101);
             this.groupParamHolo.TabIndex = 10;
@@ -590,7 +615,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 27);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(682, 620);
+            this.panel2.Size = new System.Drawing.Size(717, 674);
             this.panel2.TabIndex = 12;
             // 
             // tabControl1
@@ -605,7 +630,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(682, 620);
+            this.tabControl1.Size = new System.Drawing.Size(717, 674);
             this.tabControl1.TabIndex = 9;
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
@@ -615,7 +640,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(674, 594);
+            this.tabPage1.Size = new System.Drawing.Size(709, 648);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Исходное";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -626,7 +651,7 @@
             this.picSourceImage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.picSourceImage.Location = new System.Drawing.Point(3, 3);
             this.picSourceImage.Name = "picSourceImage";
-            this.picSourceImage.Size = new System.Drawing.Size(668, 588);
+            this.picSourceImage.Size = new System.Drawing.Size(703, 642);
             this.picSourceImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picSourceImage.TabIndex = 0;
             this.picSourceImage.TabStop = false;
@@ -638,7 +663,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(674, 594);
+            this.tabPage2.Size = new System.Drawing.Size(709, 648);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Сгенерированное";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -649,10 +674,11 @@
             this.picGenHolo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.picGenHolo.Location = new System.Drawing.Point(3, 3);
             this.picGenHolo.Name = "picGenHolo";
-            this.picGenHolo.Size = new System.Drawing.Size(668, 588);
+            this.picGenHolo.Size = new System.Drawing.Size(703, 642);
             this.picGenHolo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picGenHolo.TabIndex = 1;
             this.picGenHolo.TabStop = false;
+            this.picGenHolo.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ContextMenuLeftMouseClick);
             // 
             // tabPage3
             // 
@@ -660,7 +686,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(674, 594);
+            this.tabPage3.Size = new System.Drawing.Size(709, 648);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Tag = "Reconstruction";
             this.tabPage3.Text = "Восстановленное";
@@ -669,10 +695,11 @@
             // picReconHolo
             // 
             this.picReconHolo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.picReconHolo.Cursor = System.Windows.Forms.Cursors.Cross;
             this.picReconHolo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.picReconHolo.Location = new System.Drawing.Point(3, 3);
             this.picReconHolo.Name = "picReconHolo";
-            this.picReconHolo.Size = new System.Drawing.Size(668, 588);
+            this.picReconHolo.Size = new System.Drawing.Size(703, 642);
             this.picReconHolo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picReconHolo.TabIndex = 2;
             this.picReconHolo.TabStop = false;
@@ -687,7 +714,7 @@
             this.tabZones.Location = new System.Drawing.Point(4, 22);
             this.tabZones.Name = "tabZones";
             this.tabZones.Padding = new System.Windows.Forms.Padding(3);
-            this.tabZones.Size = new System.Drawing.Size(674, 594);
+            this.tabZones.Size = new System.Drawing.Size(709, 648);
             this.tabZones.TabIndex = 3;
             this.tabZones.Text = "Анализ областей";
             this.tabZones.UseVisualStyleBackColor = true;
@@ -698,7 +725,7 @@
             this.groupAnalyzeZones.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupAnalyzeZones.Location = new System.Drawing.Point(3, 3);
             this.groupAnalyzeZones.Name = "groupAnalyzeZones";
-            this.groupAnalyzeZones.Size = new System.Drawing.Size(668, 588);
+            this.groupAnalyzeZones.Size = new System.Drawing.Size(703, 642);
             this.groupAnalyzeZones.TabIndex = 1;
             this.groupAnalyzeZones.TabStop = false;
             this.groupAnalyzeZones.Text = "Анализ зон";
@@ -718,8 +745,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.chart1);
-            this.splitContainer1.Size = new System.Drawing.Size(662, 569);
-            this.splitContainer1.SplitterDistance = 406;
+            this.splitContainer1.Size = new System.Drawing.Size(697, 623);
+            this.splitContainer1.SplitterDistance = 444;
             this.splitContainer1.TabIndex = 19;
             // 
             // picAnalyze
@@ -728,7 +755,7 @@
             this.picAnalyze.Dock = System.Windows.Forms.DockStyle.Fill;
             this.picAnalyze.Location = new System.Drawing.Point(0, 0);
             this.picAnalyze.Name = "picAnalyze";
-            this.picAnalyze.Size = new System.Drawing.Size(662, 406);
+            this.picAnalyze.Size = new System.Drawing.Size(697, 444);
             this.picAnalyze.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picAnalyze.TabIndex = 3;
             this.picAnalyze.TabStop = false;
@@ -744,7 +771,7 @@
             this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(0, 0);
             this.chart1.Name = "chart1";
-            this.chart1.Size = new System.Drawing.Size(662, 159);
+            this.chart1.Size = new System.Drawing.Size(697, 175);
             this.chart1.TabIndex = 18;
             this.chart1.Text = "chart1";
             // 
@@ -755,7 +782,7 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(674, 594);
+            this.tabPage4.Size = new System.Drawing.Size(709, 648);
             this.tabPage4.TabIndex = 5;
             this.tabPage4.Text = "Расчеты";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -766,7 +793,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel4.Location = new System.Drawing.Point(3, 3);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(231, 588);
+            this.panel4.Size = new System.Drawing.Size(266, 642);
             this.panel4.TabIndex = 5;
             // 
             // picScale
@@ -775,7 +802,7 @@
             this.picScale.Dock = System.Windows.Forms.DockStyle.Top;
             this.picScale.Location = new System.Drawing.Point(0, 0);
             this.picScale.Name = "picScale";
-            this.picScale.Size = new System.Drawing.Size(231, 209);
+            this.picScale.Size = new System.Drawing.Size(266, 209);
             this.picScale.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picScale.TabIndex = 1;
             this.picScale.TabStop = false;
@@ -785,18 +812,19 @@
             // 
             this.panel3.Controls.Add(this.picScale2);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel3.Location = new System.Drawing.Point(234, 3);
+            this.panel3.Location = new System.Drawing.Point(269, 3);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(437, 588);
+            this.panel3.Size = new System.Drawing.Size(437, 642);
             this.panel3.TabIndex = 4;
             // 
             // picScale2
             // 
             this.picScale2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.picScale2.Cursor = System.Windows.Forms.Cursors.Cross;
             this.picScale2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.picScale2.Location = new System.Drawing.Point(0, 0);
             this.picScale2.Name = "picScale2";
-            this.picScale2.Size = new System.Drawing.Size(437, 588);
+            this.picScale2.Size = new System.Drawing.Size(437, 642);
             this.picScale2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picScale2.TabIndex = 1;
             this.picScale2.TabStop = false;
@@ -808,7 +836,7 @@
             this.tabVideo.Location = new System.Drawing.Point(4, 22);
             this.tabVideo.Name = "tabVideo";
             this.tabVideo.Padding = new System.Windows.Forms.Padding(3);
-            this.tabVideo.Size = new System.Drawing.Size(674, 594);
+            this.tabVideo.Size = new System.Drawing.Size(709, 648);
             this.tabVideo.TabIndex = 4;
             this.tabVideo.Text = "Изображение с камеры";
             this.tabVideo.UseVisualStyleBackColor = true;
@@ -818,16 +846,37 @@
             this.picVideo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.picVideo.Location = new System.Drawing.Point(3, 3);
             this.picVideo.Name = "picVideo";
-            this.picVideo.Size = new System.Drawing.Size(668, 588);
+            this.picVideo.Size = new System.Drawing.Size(703, 642);
             this.picVideo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picVideo.TabIndex = 0;
             this.picVideo.TabStop = false;
+            this.picVideo.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ContextMenuLeftMouseClick);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.копироватьToolStripMenuItem,
+            this.btnSaveAsBitmap});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(154, 48);
+            // 
+            // копироватьToolStripMenuItem
+            // 
+            this.копироватьToolStripMenuItem.Name = "копироватьToolStripMenuItem";
+            this.копироватьToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.копироватьToolStripMenuItem.Text = "Копировать";
+            // 
+            // btnSaveAsBitmap
+            // 
+            this.btnSaveAsBitmap.Name = "btnSaveAsBitmap";
+            this.btnSaveAsBitmap.Size = new System.Drawing.Size(153, 22);
+            this.btnSaveAsBitmap.Text = "Сохранить как";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(964, 669);
+            this.ClientSize = new System.Drawing.Size(964, 723);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.statusStrip1);
@@ -882,6 +931,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.picScale2)).EndInit();
             this.tabVideo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picVideo)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -952,6 +1002,10 @@
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.PictureBox picSourceImage;
         private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem btnSaveAsBitmap;
+        private System.Windows.Forms.ToolStripMenuItem копироватьToolStripMenuItem;
+        private System.Windows.Forms.Button btnSaveAllReconImages;
     }
 }
 

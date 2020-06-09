@@ -9,6 +9,7 @@ using System.Threading;
 using System.Windows.Forms.DataVisualization.Charting;
 using Accord.Video.DirectShow;
 using Accord.Video;
+using System.IO;
 
 namespace ConvolutionMethod
 {
@@ -16,7 +17,7 @@ namespace ConvolutionMethod
     {
         /// <summary>
         /// Структура для создания прямоугольника выделения
-        /// TODO: перенести BoundVisibleImage в эту структуру
+        /// TODO: перенести BoundVisibleImage в эту структуру 
         /// </summary>
 
         class SelectionRectangle
@@ -266,6 +267,8 @@ namespace ConvolutionMethod
         public MainForm()
         {
             InitializeComponent();
+
+            InitializeCombobox();
         }
 
         private void InitializeParameters()
@@ -280,21 +283,26 @@ namespace ConvolutionMethod
             d *= mm;
 
             float.TryParse(txbSizeStep.Text.Replace('.', ','), out sizeStep);
-            steps = (int)numStep.Value;
+            sizeStep *= mm;
 
+            steps = (int)numStep.Value;
+        }
+
+        private void InitializeCombobox()
+        {
             if (!InvokeRequired)
             {
                 videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
 
                 foreach (FilterInfo fi in videoDevices)
                     cmbCam.Items.Add(fi.Name);
+
+                cmbCam.SelectedIndex = 0;
+
+                cmbChannel.SelectedIndex = 0;
+
+                cmbMeasure.SelectedIndex = 0;
             }
-
-            cmbCam.SelectedIndex = 0;
-
-            cmbChannel.SelectedIndex = 0;
-
-            cmbMeasure.SelectedIndex = 0;
         }
 
         private void InitializeDictionary()
@@ -563,6 +571,58 @@ namespace ConvolutionMethod
             CloseVideo();
 
             //TODO: CloseThread();
+        }
+
+        private void ContextMenuLeftMouseClick(object sender, MouseEventArgs e)
+        {
+            btnSaveAsBitmap.Click += (s, ev) =>
+            {
+                SaveFileDialog sfd = new SaveFileDialog()
+                {
+                    Filter = "BMP File| *.bmp|JPEG File|*.jpg| GIF File|*.gif",
+                };
+
+                if (sfd.ShowDialog() != DialogResult.OK)
+                    return;
+
+                ((PictureBox)sender).Image.Save(sfd.FileName);
+
+                return;
+            };
+
+            if (((PictureBox)sender).Image == null) return;
+
+            if (e.Button == MouseButtons.Right)
+                contextMenuStrip1.Show((Control)sender, e.Location);
+            else contextMenuStrip1.Hide();
+        }
+
+        private void btnSaveAllReconImages_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+
+            if (fbd.ShowDialog() != DialogResult.OK)
+                return;
+
+            Func f = () =>
+            {
+                string path = fbd.SelectedPath;
+
+                for (int i = 0; i < reconstructionImages.Count; i++)
+                {
+                    reconstructionImages[i].Save(path + $"\\wave_{wave / nm}nm, pixel_{dx / mm}mm, dist_{(d + i * sizeStep) / mm}mm.bmp");
+
+                    SetValueControlInOtherThread(toolStripProgressBar1, "Value", 95 * i / reconstructionImages.Count);
+
+                    SetValueControlInOtherThread(toolStripStatusLabel1, "Text", $"Сохранение ({i + 1} из {reconstructionImages.Count})");
+                }
+
+                SetValueControlInOtherThread(toolStripProgressBar1, "Value", 100);
+
+                SetValueControlInOtherThread(toolStripStatusLabel1, "Text", $"Готово");
+            };
+
+            OtherThreadWork(f);
         }
 
         #region Ruler
@@ -1191,6 +1251,8 @@ namespace ConvolutionMethod
 
             if(btnCircle.Checked)
                 WriteRecordZone();
+
+            ContextMenuLeftMouseClick(sender, e);
         }
 
         private void btnCircle_CheckStateChanged(object sender, EventArgs e)
@@ -1628,6 +1690,8 @@ namespace ConvolutionMethod
             //trackBar1.Enabled = true;
             SetValueControlInOtherThread(trackBar1, "Enabled", true);
 
+            SetValueControlInOtherThread(btnSaveAllReconImages, "Enabled", true);
+
             //trackBar1.Maximum = steps - 1;
             SetValueControlInOtherThread(trackBar1, "Maximum", steps - 1);
 
@@ -1668,7 +1732,7 @@ namespace ConvolutionMethod
 
                 reconstructionImages.Add(GetGrayImageFromImageData(ShiftImage(GetAbs(resultFft)), widthImage, heightImage));
 
-                d += sizeStep * mm;
+                d += sizeStep;
             }
 
             InitializeParameters();
