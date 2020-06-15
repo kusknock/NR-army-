@@ -30,8 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend8 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.btnFile = new System.Windows.Forms.ToolStripMenuItem();
             this.btnOpen = new System.Windows.Forms.ToolStripMenuItem();
@@ -98,7 +98,6 @@
             this.tabVideo = new System.Windows.Forms.TabPage();
             this.picVideo = new System.Windows.Forms.PictureBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.копироватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnSaveAsBitmap = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -186,6 +185,7 @@
             // 
             // btnVideo
             // 
+            this.btnVideo.Enabled = false;
             this.btnVideo.Name = "btnVideo";
             this.btnVideo.Size = new System.Drawing.Size(89, 23);
             this.btnVideo.Text = "Захват видео";
@@ -588,7 +588,7 @@
             this.txbDx.Name = "txbDx";
             this.txbDx.Size = new System.Drawing.Size(100, 20);
             this.txbDx.TabIndex = 2;
-            this.txbDx.Text = "0.007";
+            this.txbDx.Text = "0.0028";
             this.txbDx.TextChanged += new System.EventHandler(this.txbWave_TextChanged);
             // 
             // lblWave
@@ -764,11 +764,11 @@
             // 
             this.chart1.BackColor = System.Drawing.SystemColors.Control;
             this.chart1.BorderlineColor = System.Drawing.Color.Black;
-            chartArea1.Name = "Area";
-            this.chart1.ChartAreas.Add(chartArea1);
+            chartArea8.Name = "Area";
+            this.chart1.ChartAreas.Add(chartArea8);
             this.chart1.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend1.Name = "Legend1";
-            this.chart1.Legends.Add(legend1);
+            legend8.Name = "Legend1";
+            this.chart1.Legends.Add(legend8);
             this.chart1.Location = new System.Drawing.Point(0, 0);
             this.chart1.Name = "chart1";
             this.chart1.Size = new System.Drawing.Size(697, 175);
@@ -793,7 +793,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel4.Location = new System.Drawing.Point(3, 3);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(266, 642);
+            this.panel4.Size = new System.Drawing.Size(226, 642);
             this.panel4.TabIndex = 5;
             // 
             // picScale
@@ -802,7 +802,7 @@
             this.picScale.Dock = System.Windows.Forms.DockStyle.Top;
             this.picScale.Location = new System.Drawing.Point(0, 0);
             this.picScale.Name = "picScale";
-            this.picScale.Size = new System.Drawing.Size(266, 209);
+            this.picScale.Size = new System.Drawing.Size(226, 209);
             this.picScale.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picScale.TabIndex = 1;
             this.picScale.TabStop = false;
@@ -812,9 +812,9 @@
             // 
             this.panel3.Controls.Add(this.picScale2);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel3.Location = new System.Drawing.Point(269, 3);
+            this.panel3.Location = new System.Drawing.Point(229, 3);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(437, 642);
+            this.panel3.Size = new System.Drawing.Size(477, 642);
             this.panel3.TabIndex = 4;
             // 
             // picScale2
@@ -824,7 +824,7 @@
             this.picScale2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.picScale2.Location = new System.Drawing.Point(0, 0);
             this.picScale2.Name = "picScale2";
-            this.picScale2.Size = new System.Drawing.Size(437, 642);
+            this.picScale2.Size = new System.Drawing.Size(477, 642);
             this.picScale2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picScale2.TabIndex = 1;
             this.picScale2.TabStop = false;
@@ -850,21 +850,15 @@
             this.picVideo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picVideo.TabIndex = 0;
             this.picVideo.TabStop = false;
+            this.picVideo.DoubleClick += new System.EventHandler(this.picVideo_DoubleClick);
             this.picVideo.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ContextMenuLeftMouseClick);
             // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.копироватьToolStripMenuItem,
             this.btnSaveAsBitmap});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(154, 48);
-            // 
-            // копироватьToolStripMenuItem
-            // 
-            this.копироватьToolStripMenuItem.Name = "копироватьToolStripMenuItem";
-            this.копироватьToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
-            this.копироватьToolStripMenuItem.Text = "Копировать";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(154, 26);
             // 
             // btnSaveAsBitmap
             // 
@@ -1004,7 +998,6 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem btnSaveAsBitmap;
-        private System.Windows.Forms.ToolStripMenuItem копироватьToolStripMenuItem;
         private System.Windows.Forms.Button btnSaveAllReconImages;
     }
 }

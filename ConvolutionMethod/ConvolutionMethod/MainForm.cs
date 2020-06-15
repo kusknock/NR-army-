@@ -343,7 +343,7 @@ namespace ConvolutionMethod
             InitializeParameters();
             InitializeDictionary();
 
-            trackBar1.Enabled = false;
+            //trackBar1.Enabled = false;
 
             picGenHolo.Image = picReconHolo.Image = picAnalyze.Image = picScale.Image = picScale2.Image = null;
 
@@ -416,25 +416,50 @@ namespace ConvolutionMethod
             if (picReconHolo.Image == null)
                 return;
 
-            if (tabControl1.SelectedIndex == 2 || tabControl1.SelectedIndex == 1)
+            if (tabControl1.SelectedTab.Text == "Изображение с камеры")
+                btnVideo.Enabled = true;
+            else btnVideo.Enabled = false;
+
+            if (tabControl1.SelectedTab.Text == "Сгенерированное"
+                || tabControl1.SelectedTab.Text == "Восстановленное")
                 rbtnAmp.Enabled = rbtnPhase.Enabled = true;
             else
                 rbtnAmp.Enabled = rbtnPhase.Enabled = false;
 
             //-----------------
-            if (tabControl1.SelectedIndex == 3)
+            if (tabControl1.SelectedTab.Text == "Анализ областей")
                 listZones.Enabled = true;
+
             else
                 listZones.Enabled = false;
 
+
             //-----------------
-            if (tabControl1.SelectedIndex == 2)
-            { 
+            if (tabControl1.SelectedTab.Text == "Восстановленное")
+            {
                 toolStrip1.Enabled = true;
+
                 visibleImageRectangle = BoundVisibleImage(picReconHolo, sr0);
             }
             else
-                toolStrip1.Enabled = false; 
+            {
+                toolStrip1.Enabled = false;
+            }
+
+            if (tabControl1.SelectedTab.Text == "Анализ областей" || tabControl1.SelectedTab.Text == "Расчеты")
+            {
+                // picAnalyze.Image = reconstructionImages[trackBar1.Value];
+                picScale.Image = reconstructionImages[trackBar1.Value];
+            }
+
+            if (tabControl1.SelectedTab.Text == "Анализ областей" || tabControl1.SelectedTab.Text == "Восстановленное")
+            {
+                if (reconstructionImages.Count != 0)
+                    trackBar1.Enabled = true;
+            }
+            else
+                trackBar1.Enabled = false;
+
         }
 
         private void rbtnPhase_CheckedChanged(object sender, EventArgs e)
@@ -481,8 +506,6 @@ namespace ConvolutionMethod
                 picReconHolo.Image = reconstructionPhaseImages[trackBar1.Value];
 
             lblCurrentDistance.Text = string.Format("{0} mm", distances[trackBar1.Value].ToString("0.00"));
-
-            picAnalyze.Image = reconstructionImages[trackBar1.Value];
         }
 
         private void txbWave_TextChanged(object sender, EventArgs e)
@@ -606,23 +629,35 @@ namespace ConvolutionMethod
 
             Func f = () =>
             {
-                string path = fbd.SelectedPath;
-
-                for (int i = 0; i < reconstructionImages.Count; i++)
+                try
                 {
-                    reconstructionImages[i].Save(path + $"\\wave_{wave / nm}nm, pixel_{dx / mm}mm, dist_{(d + i * sizeStep) / mm}mm.bmp");
+                    string path = fbd.SelectedPath;
 
-                    SetValueControlInOtherThread(toolStripProgressBar1, "Value", 95 * i / reconstructionImages.Count);
+                    for (int i = 0; i < reconstructionImages.Count; i++)
+                    {
+                        reconstructionImages[i].Save(path + $"\\wave_{wave / nm}nm, pixel_{dx / mm}mm, dist_{((d + i * sizeStep) / mm).ToString("00.0")}mm.bmp");
 
-                    SetValueControlInOtherThread(toolStripStatusLabel1, "Text", $"Сохранение ({i + 1} из {reconstructionImages.Count})");
+                        SetValueControlInOtherThread(toolStripProgressBar1, "Value", 95 * i / reconstructionImages.Count);
+
+                        SetValueControlInOtherThread(toolStripStatusLabel1, "Text", $"Сохранение ({i + 1} из {reconstructionImages.Count})");
+                    }
+
+                    SetValueControlInOtherThread(toolStripProgressBar1, "Value", 100);
+
+                    SetValueControlInOtherThread(toolStripStatusLabel1, "Text", $"Готово");
                 }
-
-                SetValueControlInOtherThread(toolStripProgressBar1, "Value", 100);
-
-                SetValueControlInOtherThread(toolStripStatusLabel1, "Text", $"Готово");
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка: {ex.Message}");
+                }
             };
 
             OtherThreadWork(f);
+        }
+
+        private void picVideo_DoubleClick(object sender, EventArgs e)
+        {
+
         }
 
         #region Ruler
@@ -889,12 +924,19 @@ namespace ConvolutionMethod
 
         private void btnCalcDifference_Click(object sender, EventArgs e)
         {
-            if (listZones.SelectedItem == null || cmbMeasure.Text == "All Measures")
-                return;
+            try
+            {
+                if (listZones.SelectedItem == null || cmbMeasure.Text == "All Measures")
+                    return;
 
-            CalculationDifference(zonesAnalyze[listZones.SelectedIndex], listZones.Text);
+                CalculationDifference(zonesAnalyze[listZones.SelectedIndex], listZones.Text);
 
-            DrawGraph(chart1, measuresZone[listZones.Text][cmbMeasure.Text].ToArray(), distances.ToArray(), cmbMeasure.Text);
+                DrawGraph(chart1, measuresZone[listZones.Text][cmbMeasure.Text].ToArray(), distances.ToArray(), cmbMeasure.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка: {ex.Message}!");
+            }
         }
 
         private void listZones_SelectedIndexChanged(object sender, EventArgs e)
@@ -1119,6 +1161,10 @@ namespace ConvolutionMethod
             listZones.Items.Add($"Зона ({area.X}, {area.Y})");
 
             measuresZone.Add($"Зона ({area.X}, {area.Y})", new Dictionary<string, List<float>>());
+
+            if (listZones.SelectedIndex == -1) listZones.SelectedIndex = 0;
+
+            cmbMeasure_SelectedIndexChanged(cmbMeasure, new EventArgs());
         }
 
         private void DrawEllipseSelection(Point location)
@@ -1688,7 +1734,7 @@ namespace ConvolutionMethod
         private void ReconstructionDynamicDistance()
         {
             //trackBar1.Enabled = true;
-            SetValueControlInOtherThread(trackBar1, "Enabled", true);
+            //SetValueControlInOtherThread(trackBar1, "Enabled", true);
 
             SetValueControlInOtherThread(btnSaveAllReconImages, "Enabled", true);
 
